@@ -33,9 +33,7 @@ Follows a few sample configurations for the InfluxDb appender:
     <Configuration status="error">
       <Appenders>
         <NoSql name="databaseAppender">
-			<InfluxDb databaseName="applicationDb" seriesName="applicationLog"
-				url="http://sandbox.influxdb.com:8086/" username="loggingUser"
-				password="abc123" transport="UDP" udpPort="4444" />
+			<InfluxDb seriesName="applicationLog" url="http://sandbox.influxdb.com:8086/"                                                     username="loggingUser" password="abc123" transport="UDP" udpPort="4444" />
         </NoSql>
       </Appenders>
       <Loggers>
