@@ -8,10 +8,11 @@ import org.apache.logging.log4j.nosql.appender.NoSqlConnection;
 import org.apache.logging.log4j.nosql.appender.NoSqlObject;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
-import org.influxdb.dto.Serie;
+import org.influxdb.InfluxDB.ConsistencyLevel;
+import org.influxdb.dto.BatchPoints;
 
 /**
- * The MongoDB implementation of {@link NoSqlConnection}.
+ * The InfluxDB implementation of {@link NoSqlConnection}.
  */
 public final class InfluxDbConnection implements NoSqlConnection<Map<String, Object>, DefaultNoSqlObject> {
 
@@ -26,6 +27,10 @@ public final class InfluxDbConnection implements NoSqlConnection<Map<String, Obj
 		this.database = databaseName;
 		this.seriesName = serieName;
 		this.influxDB = InfluxDBFactory.connect(url, username, password);
+		this.influxDB.createDatabase(this.database);
+		// Flush every 2000 Points, at least every 100ms
+		this.influxDB.enableBatch(2000, 100, TimeUnit.MILLISECONDS);
+		
 		this.useUdp = "UDP".equalsIgnoreCase(transport);
 		this.udpPort = udpPort;
 	}
@@ -42,14 +47,18 @@ public final class InfluxDbConnection implements NoSqlConnection<Map<String, Obj
 	
 	@Override
 	public void insertObject(NoSqlObject<Map<String, Object>> object) {
-		InfluxMapToSeriesConverter converter = new InfluxMapToSeriesConverter();
-		Serie serie = converter.convertToSerie(seriesName, object.unwrap());
+		BatchPoints batchPoints = BatchPoints
+                .database(database)
+                .retentionPolicy("default")
+                .consistency(ConsistencyLevel.ALL)
+                .build();
 		
-		if (!useUdp) {
-			influxDB.write(database, TimeUnit.MILLISECONDS, serie);
-		} else {
-			influxDB.writeUdp(udpPort, serie);
-		}
+		InfluxMapToSeriesConverter converter = new InfluxMapToSeriesConverter(this.seriesName, batchPoints);
+		BatchPoints bpoints = converter.convertToBatchPoints(object.unwrap());
+	
+		//TODO: did not find the udp impl of the influx-java driver. fix this for using udp.
+		influxDB.write(bpoints);
+	
 	}
 
 	@Override

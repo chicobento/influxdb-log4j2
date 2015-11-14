@@ -24,7 +24,7 @@ import org.apache.logging.log4j.nosql.appender.NoSqlProvider;
 import org.apache.logging.log4j.status.StatusLogger;
 
 /**
- * The MongoDB implementation of {@link NoSqlProvider}.
+ * The InfluxDB implementation of {@link NoSqlProvider}.
  */
 @Plugin(name = "InfluxDb", category = "Core", printObject = true)
 public final class InfluxDbProvider implements NoSqlProvider<InfluxDbConnection> {
