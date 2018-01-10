@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
- <Configuration status="error">
-   <Appenders>
-     <Console name="STDOUT" target="SYSTEM_OUT">
-      <PatternLayout pattern="%m%n"/>
-    </Console>
-     <NoSql name="databaseAppender">
-	<InfluxDb databaseName="applicationDb" seriesName="applicationLog"
-				url="http://sandbox.influxdb.com:8086/" username="loggingUser"
-				password="abc123" />
-     </NoSql>
-   </Appenders>
-   <Loggers>
-     <Logger name="com.cbnt.InfluxDbLog4jAppenderTest" level="trace">
-      <AppenderRef ref="databaseAppender"/>
-     </Logger>
-     <Root level="trace">
-       <AppenderRef ref="STDOUT"/>
-     </Root>
-   </Loggers>
- </Configuration>
+<Configuration status="error">
+    <Appenders>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%m%n"/>
+        </Console>
+        <NoSql name="databaseAppender">
+            <InfluxDb databaseName="applicationDb" seriesName="applicationLog"
+                      url="http://localhost:8086/" username="loggingUser"
+                      password="abc123" transport="UDP" port="8089"/>
+        </NoSql>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.cbnt.InfluxDbLog4jAppenderTest" level="trace">
+            <AppenderRef ref="databaseAppender"/>
+        </Logger>
+        <Root level="trace">
+            <AppenderRef ref="STDOUT"/>
+        </Root>
+    </Loggers>
+</Configuration>
